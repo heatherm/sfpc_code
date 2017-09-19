@@ -7,9 +7,10 @@ void ofApp::setup(){
     columns = 60;
     rows = 25;
     midPoint = floor(columns/2);
-    cellSize = 20;
+    cellSize = 25;
+    offset = 10;
     minAngle = 90;
-    maxMidpointAngle = 140;
+    maxMidpointAngle = 94;
     
     ofBackground(255);
     ofSetColor(0);
@@ -52,8 +53,15 @@ ofPoint ofApp::calculateStartCoordinates(int columnPosition, int rowPosition){
     int xPos = columnPosition*cellSize;
     int yPos = rowPosition*cellSize;
     
-    float xOffset = offset/distanceFromEdge;
-    ofPoint pos = ofPoint(xPos-xOffset, yPos+offset);
+    float smooshFactor = offset*(distanceFromEdge);
+    
+    ofPoint pos;
+    if(columnPosition > midPoint) {
+      pos = ofPoint(xPos+smooshFactor, yPos+offset);
+    } else {
+      pos = ofPoint(xPos-smooshFactor, yPos+offset);
+    }
+    
     return pos;
 }
 
