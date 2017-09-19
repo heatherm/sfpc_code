@@ -25,6 +25,6 @@ class ofApp : public ofBaseApp{
         int calculateAngleRangeForColumn(int distanceFromEdge);
         void drawLineWithAngleAndThickness(ofPoint startingPoint, int angle, int distance);
     
-        int columns, rows, offset, cellSize, minAngle;
+        int columns, rows, offset, cellSize, minAngle, maxMidpointAngle;
         float midPoint, possibleAngleVariation;
 };

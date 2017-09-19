@@ -9,6 +9,7 @@ void ofApp::setup(){
     midPoint = floor(columns/2);
     cellSize = 20;
     minAngle = 90;
+    maxMidpointAngle = 140;
     
     ofBackground(255);
     ofSetColor(0);
@@ -27,7 +28,8 @@ void ofApp::drawLineWithAngleAndThickness(ofPoint startingPoint, int angleVariat
     ofRotateZ(ofRandom(minAngle, maxAngle));
     ofPoint lineStart = -ofPoint(0, cellSize);
     ofPoint lineEnd = ofPoint(cellSize,0);
-    ofSetLineWidth(distanceFromEdge/3);
+    int scaledDown = distanceFromEdge/3;
+    ofSetLineWidth(scaledDown);
     ofDrawLine(lineStart, lineEnd);
 }
 
@@ -38,7 +40,8 @@ int ofApp::calculateAngleRangeForColumn(int columnPosition){
     if(distanceFromEdge == 0) {
         return 0;
     } else {
-        return 10.0*(distanceFromEdge/7.0);
+        int possibleRange = maxMidpointAngle-minAngle;
+        return (possibleRange/midPoint)*distanceFromEdge;
     }
 }
 
