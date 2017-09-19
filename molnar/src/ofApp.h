@@ -20,5 +20,11 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+    
+        ofPoint calculateStartCoordinates(int columnPosition, int rowPosition);
+        int calculateAngleRangeForColumn(int distanceFromEdge);
+        void drawLineWithAngleAndThickness(ofPoint startingPoint, int angle, int distance);
+    
+        int columns, rows, offset, cellSize, minAngle;
+        float midPoint, possibleAngleVariation;
 };
