@@ -10,7 +10,7 @@ void ofApp::setup(){
     cellSize = 25;
     offset = 10;
     minAngle = 90;
-    maxMidpointAngle = 94;
+    maxMidpointAngle = 135;
     
     ofBackground(255);
     ofSetColor(0);
@@ -24,13 +24,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::drawLineWithAngleAndThickness(ofPoint startingPoint, int angleVariation, int distanceFromEdge){
     int maxAngle = minAngle + angleVariation;
+    int scaledWidth = distanceFromEdge/3;
     
     ofTranslate(startingPoint.x, startingPoint.y);
     ofRotateZ(ofRandom(minAngle, maxAngle));
     ofPoint lineStart = -ofPoint(0, cellSize);
     ofPoint lineEnd = ofPoint(cellSize,0);
-    int scaledDown = distanceFromEdge/3;
-    ofSetLineWidth(scaledDown);
+    ofSetLineWidth(scaledWidth);
     ofDrawLine(lineStart, lineEnd);
 }
 
@@ -48,20 +48,19 @@ int ofApp::calculateAngleRangeForColumn(int columnPosition){
 
 //--------------------------------------------------------------
 ofPoint ofApp::calculateStartCoordinates(int columnPosition, int rowPosition){
-    float distanceFromEdge = midPoint - abs(columnPosition - midPoint);
+    float scaledOffset = abs(columnPosition-midPoint) * 10;
     
-    int xPos = columnPosition*cellSize;
     int yPos = rowPosition*cellSize;
-    
-    float smooshFactor = offset*(distanceFromEdge);
+    int xPos = cellSize*columnPosition;
     
     ofPoint pos;
-    if(columnPosition > midPoint) {
-      pos = ofPoint(xPos+smooshFactor, yPos+offset);
-    } else {
-      pos = ofPoint(xPos-smooshFactor, yPos+offset);
+    if(columnPosition == midPoint) {
+      pos = ofPoint(xPos, yPos+offset);
+    } else if (columnPosition < midPoint) {
+      pos = ofPoint(xPos+(scaledOffset), yPos+offset);
+    } else if (columnPosition > midPoint) {
+      pos = ofPoint(xPos-(scaledOffset), yPos+offset);
     }
-    
     return pos;
 }
 
