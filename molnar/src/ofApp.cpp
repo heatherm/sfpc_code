@@ -31,6 +31,7 @@ void ofApp::drawLineWithAngleAndThickness(ofPoint startingPoint, int angleVariat
     ofPoint lineStart = -ofPoint(0, cellSize);
     ofPoint lineEnd = ofPoint(cellSize,0);
     ofSetLineWidth(scaledWidth);
+    
     ofDrawLine(lineStart, lineEnd);
 }
 
