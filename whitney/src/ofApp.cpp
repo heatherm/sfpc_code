@@ -2,154 +2,156 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    soundPlayer.load("sounds/taro.mp3");
+    soundPlayer.play();
+        
+    ofSetVerticalSync(true);
+    ofBackground(0);
+    
+    soundStream.printDeviceList();
+    
+    int bufferSize = 256;
+    
+    left.assign(bufferSize, 0.0);
+    right.assign(bufferSize, 0.0);
+    volHistory.assign(400, 0.0);
+    
+    bufferCounter	= 0;
+    drawCounter		= 0;
+    smoothedVol     = 0.0;
+    scaledVol		= 0.0;
+    
+        
+    ofSoundStreamSetup(0, 2, this, 44100, bufferSize, 2);
+    
+    auto devices = soundStream.getMatchingDevices("default");
+    if(!devices.empty()){
+        soundStream.setDevice(devices[0]);
+    }
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    ofScopedLock waveformLock(mutex);
+    
+    scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    float sinVal = sin(ofGetElapsedTimef());
-    ofBackground(0);
+    ofSetColor(225);
     
-// circle moves from left to right
-//    ofDrawCircle(
-//        ofMap(sinVal, -1, 1, 0, ofGetWidth()),
-//                 ofGetHeight()/2,
-//                 100
-//                 );
-// cirle grows from center
-//    ofDrawCircle(ofGetWidth()/2,
-//                 ofGetHeight()/2,
-//                 ofMap(sinVal, -1, 1, 1, 200)
-//                 );
-// frequency (multiply)
-//    
-//    ofDrawCircle(ofMap(sinVal, -1, 1, 200, 600),
-//                 100,
-//                 20
-//                 );
-//    
-//    float sinVal2 = sin(ofGetElapsedTimef()*2);
-//    ofDrawCircle(ofMap(sinVal2, -1, 1, 200, 600),
-//                 150,
-//                 20
-//                 );
-//
-//    float sinVal3 = sin(ofGetElapsedTimef()*3);
-//    ofDrawCircle(ofMap(sinVal3, -1, 1, 200, 600),
-//                 200,
-//                 20
-//                 );
-// phase (add)
-//    for(int i = 0; i < 10; i++) {
-//        float sinVal = sin(ofGetElapsedTimef()+i*.1);
-//        ofDrawCircle(ofMap(sinVal, -1, 1, 200, 600),
-//                     50*i,
-//                     20
-//                     );
-//
-//    }
-// move around a mouse point
-//    float x = mouseX + 100 * cos(ofGetElapsedTimef());
-//    float y = mouseY + 100 * sin(ofGetElapsedTimef());
-//    
-//    ofDrawCircle(x,y, 10);
-// of polyline
-//    float radius = ofMap(sin(ofGetElapsedTimef()*20), -1,1,100,300);
-//        float x = mouseX + 100 * cos(ofGetElapsedTimef());
-//        float y = mouseY + 100 * sin(ofGetElapsedTimef());
-//    
-//    myLine.addVertex(x,y);
-//    
-//    if(myLine.size() > 50) {
-//        myLine.getVertices().erase(myLine.getVertices().begin());
-//    }
-//    myLine.draw();
-//    
-//}
-// lissajous figure
-//            float x = ofGetWidth()/2 + 200 * cos(ofGetElapsedTimef()*3.7);
-//            float y = ofGetHeight()/2 + 200 * sin(ofGetElapsedTimef()*2.1);
-//    
-//    myLine.addVertex(x,y);
-//    
-//        if(myLine.size() > 2200) {
-//            myLine.getVertices().erase(myLine.getVertices().begin());
-//        }
-//        myLine.draw();
-//    ofSetCircleResolution(100);
-//    for (int i =0 ; i< 700; i++){
-//        ofDrawCircle(200+i, ofGetHeight()/2, 100);
-//    }
+    ofNoFill();
+
+    ofPushStyle();
+    ofPushMatrix();
+    ofTranslate(0, 0, 0);
+    
+    ofSetColor(225);
+    ofDrawBitmapString("Scaled average vol (0-100): " + ofToString(scaledVol * 100.0, 0), 4, 18);
+    
+    ofFill();
     
     float time = ofGetElapsedTimef();
     ofSetCircleResolution(100);
-    for (int i =0 ; i< 700; i++){
+    for (int i =0 ; i< 2200; i++){
         ofSetColor(
                    127+127*sin(i*0.01),
                    127+127*sin(i*0.011),
                    127+127*sin(i*0.012)
                    );
-        ofDrawCircle(200+i, ofGetHeight()/2 + mouseX *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
+
+        ofDrawCircle(200+i, ofGetHeight()/2 + (scaledVol * 190.0f) *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
     }
+    
+    
+    ofPopMatrix();
+    ofPopStyle();
+
+    drawCounter++;
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::audioIn(ofSoundBuffer & input){
+    ofScopedLock waveformLock(mutex);
+    
+    float curVol = 0.0;
+    
+    int numCounted = 0;
+    
+    for (size_t i = 0; i < input.getNumFrames(); i++){
+        left[i]		= input[i*2]*0.5;
+        right[i]	= input[i*2+1]*0.5;
+        
+        curVol += left[i] * left[i];
+        curVol += right[i] * right[i];
+        numCounted+=2;
+    }
+    
+    curVol /= (float)numCounted;
+    
+    curVol = sqrt( curVol );
+    
+    smoothedVol *= 0.93;
+    smoothedVol += 0.07 * curVol;
+    
+    bufferCounter++;
+    
+}
 
+//--------------------------------------------------------------
+void ofApp::keyPressed  (int key){
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+    
 }
