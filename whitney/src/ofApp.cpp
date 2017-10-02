@@ -8,13 +8,10 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     ofBackground(0);
     
-    soundStream.printDeviceList();
-    
     int bufferSize = 256;
     
     left.assign(bufferSize, 0.0);
     right.assign(bufferSize, 0.0);
-    volHistory.assign(400, 0.0);
     
     bufferCounter	= 0;
     drawCounter		= 0;
@@ -56,14 +53,14 @@ void ofApp::draw(){
     
     float time = ofGetElapsedTimef();
     ofSetCircleResolution(100);
-    for (int i =0 ; i< 2200; i++){
+    for (size_t i = 0 ; i < ofGetWidth(); i++){
         ofSetColor(
-                   127+127*sin(i*0.01),
-                   127+127*sin(i*0.011),
-                   127+127*sin(i*0.012)
+                   102,
+                   178+77*cos(ofGetElapsedTimef()+ i*0.013),
+                   178+77*cos(ofGetElapsedTimef()+ (i*0.014))
                    );
 
-        ofDrawCircle(200+i, ofGetHeight()/2 + (scaledVol * 190.0f) *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
+        ofDrawCircle(i, ofGetHeight()/2 + (scaledVol * 290.0f) *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
     }
     
     
@@ -99,7 +96,6 @@ void ofApp::audioIn(ofSoundBuffer & input){
     smoothedVol += 0.07 * curVol;
     
     bufferCounter++;
-    
 }
 
 //--------------------------------------------------------------
