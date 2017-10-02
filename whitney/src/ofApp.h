@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
     
@@ -38,4 +39,7 @@ public:
     ofSoundPlayer soundPlayer;
     
     ofMutex mutex;
+    
+    ofxPanel gui;
+    ofxFloatSlider scaleFactor;
 };

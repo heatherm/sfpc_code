@@ -2,6 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    gui.setup();
+    gui.add(scaleFactor.setup("scaleFactor", 100, 400, 10));
+    
     soundPlayer.load("sounds/taro.mp3");
     soundPlayer.play();
         
@@ -39,6 +42,7 @@ void ofApp::update(){
 void ofApp::draw(){
     
     ofSetColor(225);
+    gui.draw();
     
     ofNoFill();
 
@@ -60,7 +64,7 @@ void ofApp::draw(){
                    178+77*cos(ofGetElapsedTimef()+ (i*0.014))
                    );
 
-        ofDrawCircle(i, ofGetHeight()/2 + (scaledVol * 290.0f) *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
+        ofDrawCircle(i, ofGetHeight()/2 + (scaledVol * scaleFactor) *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
     }
     
     
