@@ -2,13 +2,22 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofSetVerticalSync(false);
+    ofSetFrameRate(30);
+    
+    pm.setup(1024*1024);
+
     gui.setup();
+    gui.add(pm.parameters);
+    gui.add(fpsDisp.setup("Fps", ""));
     gui.add(scaleFactor.setup("scaleFactor", 100, 400, 10));
     
-    soundPlayer.load("sounds/taro.mp3");
-    soundPlayer.play();
-        
-    ofSetVerticalSync(true);
+    bSettings = false;
+    bPause = false;
+    
+//    soundPlayer.load("sounds/taro.mp3");
+//    soundPlayer.play();
+    
     ofBackground(0);
     
     int bufferSize = 256;
@@ -33,7 +42,13 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofScopedLock waveformLock(mutex);
+//    ofScopedLock waveformLock(mutex);
+    
+    fpsDisp = ofToString(ofGetFrameRate());
+    
+    if(!bPause){
+        pm.update();
+    }
     
     scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
 }
@@ -42,8 +57,12 @@ void ofApp::update(){
 void ofApp::draw(){
     
     ofSetColor(225);
-    gui.draw();
-    
+    if(bSettings){
+        gui.draw();
+    }else{
+        ofSetColor(ofColor::white);
+        ofDrawBitmapString("'s' settings\n'p' pause\n'f' fullscreen", 15, 15);
+    }
     ofNoFill();
 
     ofPushStyle();
@@ -51,22 +70,30 @@ void ofApp::draw(){
     ofTranslate(0, 0, 0);
     
     ofSetColor(225);
+
     ofDrawBitmapString("Scaled average vol (0-100): " + ofToString(scaledVol * 100.0, 0), 4, 18);
     
     ofFill();
     
-    float time = ofGetElapsedTimef();
-    ofSetCircleResolution(100);
-    for (size_t i = 0 ; i < ofGetWidth(); i++){
-        ofSetColor(
-                   102,
-                   178+77*cos(ofGetElapsedTimef()+ i*0.013),
-                   178+77*cos(ofGetElapsedTimef()+ (i*0.014))
-                   );
-
-        ofDrawCircle(i, ofGetHeight()/2 + (scaledVol * scaleFactor) *sin(i*.03+time*1.4), 60+40*sin(i*0.01 + time));
-    }
+//    float time = ofGetElapsedTimef();
+//    ofSetCircleResolution(100);
+//    for (size_t i = 0 ; i < ofGetWidth(); i++){
+//        ofSetColor(
+//                   102,
+//                   178+77*cos(ofGetElapsedTimef()+ i*0.013),
+//                   178+77*cos(ofGetElapsedTimef()+ (i*0.014))
+//                   );
+//
+//        ofDrawCircle(
+//                     i,
+//                     ofGetHeight()/2 + (scaledVol * scaleFactor) * sin(i*.03+time*1.4),
+//                     60+40*sin(i*0.01 + time)
+//                     );
+//    }
     
+    cam.begin();
+    pm.draw();
+    cam.end();
     
     ofPopMatrix();
     ofPopStyle();
@@ -75,9 +102,34 @@ void ofApp::draw(){
     
 }
 
+void ofApp::drawSpiral(double a,double b)
+{
+    double x, y;
+    
+    int theta = 0;
+    x = a*pow(2.718281,(double)b*theta)*cos(theta);
+    y = a*pow(2.718281,(double)b*theta)*sin(theta);
+    for (int i = 0; i < 1000; i++)
+    {
+        glBegin(GL_LINES);
+        theta = 0.025*i;
+        glVertex2f((GLfloat)x, (GLfloat)y);
+        glVertex2f(a*pow(2.718281, (double)b*theta)*cos(theta), a*pow(2.718281, (double)b*theta)*sin(theta));
+        
+        //glColor3f(r, g, b);
+        x = a*pow(2.718281, (double)b*theta)*cos(theta);
+        y = a*pow(2.718281, (double)b*theta)*sin(theta);
+        
+        glEnd();
+    }
+    
+}
+
+
+
 //--------------------------------------------------------------
 void ofApp::audioIn(ofSoundBuffer & input){
-    ofScopedLock waveformLock(mutex);
+//    ofScopedLock waveformLock(mutex);
     
     float curVol = 0.0;
     
@@ -104,6 +156,19 @@ void ofApp::audioIn(ofSoundBuffer & input){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){
+    switch(key){
+        case 'f':
+            ofToggleFullscreen();
+            break;
+        case 's':
+            bSettings = !bSettings;
+            break;
+        case 'p':
+            bPause = !bPause;
+            break;
+        default:
+            break;
+    }
 }
 
 //--------------------------------------------------------------

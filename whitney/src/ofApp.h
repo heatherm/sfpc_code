@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "particleManager.h"
 
 class ofApp : public ofBaseApp{
     
@@ -24,6 +25,7 @@ public:
     void gotMessage(ofMessage msg);
 				
     void audioIn(ofSoundBuffer & input);
+    void drawSpiral(double a,double b);
     
     vector <float> left;
     vector <float> right;
@@ -42,4 +44,10 @@ public:
     
     ofxPanel gui;
     ofxFloatSlider scaleFactor;
+    ofxLabel fpsDisp;
+    
+    ofEasyCam cam;
+    
+    particleManager pm;
+    bool bSettings, bPause;
 };
