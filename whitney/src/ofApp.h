@@ -37,13 +37,17 @@ public:
     
     vector <float> left;
     vector <float> right;
-    vector <float> volHistory
+    vector <float> volHistory;
     int bufferCounter;
     float smoothedVol;
     float scaledVol;
     ofSoundStream soundStream;
     ofSoundPlayer soundPlayer;
     ofMutex mutex;
+    
+    float threshold;
+    float minimumThreshold;
+    float decayRate;
     
     // gui
     ofxPanel gui;

@@ -22,6 +22,10 @@ void ofApp::setup() {
         soundStream.setDevice(devices[0]);
     }
     
+    decayRate = 0.05;
+    minimumThreshold = 0.1;
+    threshold = minimumThreshold;
+    
     cameraRotation.set(0);
     zoom = -500;
     zoomTarget = 200;
@@ -68,13 +72,14 @@ void ofApp::update() {
         billboards.setNormal(i,ofVec3f(12 + billboardSizeTarget[i] * ofNoise(t+i),0,0));
     }
     
-    
     float mx = (float)scaledVol*scaleFactor/(float)ofGetWidth();
     float my = (float)scaledVol*scaleFactor/(float)ofGetHeight();
     ofVec3f des(mx * 360.0, my * 360.0, 0);
     cameraRotation += scaledVol*20;
 
     zoom += (zoomTarget - zoom) * scaleFactor*scaledVol;
+//    soundPlayer.setSpeed(ofRandom(0.8, 1.2));
+    
     
 }
 
@@ -110,6 +115,9 @@ void ofApp::draw() {
 void ofApp::audioIn(ofSoundBuffer & input){
     ofScopedLock waveformLock(mutex);
     
+    threshold = ofLerp(threshold, minimumThreshold, decayRate);
+    
+    
     float curVol = 0.0;
     
     int numCounted = 0;
@@ -126,6 +134,12 @@ void ofApp::audioIn(ofSoundBuffer & input){
     curVol /= (float)numCounted;
     
     curVol = sqrt( curVol );
+    
+    if(curVol > threshold) {
+        curVol = curVol*0.7+threshold*(.3);
+
+        threshold = curVol;
+    }
     
     smoothedVol *= 0.93;
     smoothedVol += 0.07 * curVol;
