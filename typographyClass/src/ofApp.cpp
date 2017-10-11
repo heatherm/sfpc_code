@@ -1,10 +1,13 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){    
-//    font.load("lato-light.ttf", 200, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi);
+void ofApp::setup(){
+    bool antiAliased = true;
+    bool fullCharSet = true;
+    bool makeContours = true;
+
     
-    font.load("lato-light.ttf", 200, true, true, true);
+    font.load("lato-light.ttf", 200, antiAliased, fullCharSet, makeContours);
 }
 
 //--------------------------------------------------------------
@@ -14,9 +17,11 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    // moving lines out of character outline
-    
+    linesRadiatingOut();
+}
+
+//--------------------------------------------------------------
+void ofApp::linesRadiatingOut(){    
     ofBackground(0);
     ofTranslate(300, 300);
     vector <ofPolyline> lines;
@@ -48,10 +53,9 @@ void ofApp::draw(){
                     }
                 }
             }
-            ofLine(a,b);
+            ofDrawLine(a,b);
         }
     }
-
 }
 
 

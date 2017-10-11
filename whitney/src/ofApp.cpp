@@ -75,7 +75,7 @@ void ofApp::update() {
     float mx = (float)scaledVol*scaleFactor/(float)ofGetWidth();
     float my = (float)scaledVol*scaleFactor/(float)ofGetHeight();
     ofVec3f des(mx * 360.0, my * 360.0, 0);
-    cameraRotation += scaledVol*20;
+    cameraRotation += scaledVol*3;
 
     zoom += (zoomTarget - zoom) * scaleFactor*scaledVol;
 //    soundPlayer.setSpeed(ofRandom(0.8, 1.2));
@@ -85,7 +85,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    ofBackgroundGradient(0, 60);
+    ofBackgroundGradient(ofColor(255,255,0), ofColor(255,0,0));
     
     gui.draw();
 

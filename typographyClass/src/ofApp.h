@@ -24,12 +24,13 @@ class ofApp : public ofBaseApp{
         void drawTextAndBoundsAndSubline();
         void drawSeveralAndRotate();
         void draw3DFont();
-    void scaleText();
-    void rotateTextOutlines();
-    void rotateTextWithTimeCurves();
+   
+        void scaleText();
+        void rotateTextOutlines();
+        void rotateTextWithTimeCurves();
+        void linesRadiatingOut();
     
         ofTrueTypeFont font;
         ofEasyCam cam;
-    
         ofPolyline line;
 };
