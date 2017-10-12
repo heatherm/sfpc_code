@@ -31,10 +31,12 @@ class ofApp : public ofBaseApp{
         void linesRadiatingOut();
     
         void branch(float length, int count);
+        void generateAngles();
     
-        int trunkSize, minSize;
-        float relativeBranchSize;
+        int trunkSize, minSize, angleBase;
+        float relativeBranchSize, bushiness, scale;
         vector<int> angles;
+        vector<string> words;
 
     
         ofTrueTypeFont font;

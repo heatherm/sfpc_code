@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ofTrueTypeFont.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -6,9 +7,16 @@ void ofApp::setup(){
     bool fullCharSet = true;
     bool makeContours = true;
     
+    font.load("lato-light.ttf", 60, antiAliased, fullCharSet, makeContours);
+    
+    vector<string> word_choices = {"His", "first", "film", "studio", "auspicious", "space", "ship", "commander", "science", "fiction", "classic", "Forbidden", "Planet", "found", "best", "dramatic", "role", "captain", "overturned", "ocean", "liner", "disaster", "movie"};
+    
     trunkSize = 250;
     relativeBranchSize = 0.67;
     minSize = 7;
+    angleBase = 30;
+    bushiness = .96;
+    scale = 1.0;
     
     int count = 0;
     float blamo = trunkSize;
@@ -18,23 +26,24 @@ void ofApp::setup(){
     }
     
     int branches = 4*count;
-
+    
     angles.resize(branches);
+    words.resize(branches);
     
     for (int i = 0; i < branches; i++){
         int angle = 30 + (i*.96);
         if(i%2 == 0){
             angles[i] = ofRandom(10,angle);
             angles[i + 1] = ofRandom(-angle,-10);
+            
+            words[i] = word_choices[ofRandom(23)];
+            words[i+1] = word_choices[ofRandom(23)];
         }
     }
-    
-    font.load("lato-light.ttf", 60, antiAliased, fullCharSet, makeContours);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
 }
 
 
@@ -44,6 +53,7 @@ void ofApp::draw(){
     ofBackground(51);
     
     ofTranslate(ofGetWidth()/2, ofGetHeight());
+    ofRotate(-90);
     branch(trunkSize, 0);
 }
 
@@ -51,8 +61,13 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::branch(float length, int count){
     ofSetColor(255);
-    ofDrawLine(0, 0, 0, -length);
-    ofTranslate(0, -length);
+    ofScale(.9, .9, 1);
+    string text = words[count];
+    float fontWidth = font.stringWidth(text);
+    font.drawString(text, 0, 0);
+    ofTranslate(fontWidth, 0);
+
+    
     if (length > minSize){
         ofPushMatrix();
         ofRotate(angles[count]);
@@ -63,7 +78,6 @@ void ofApp::branch(float length, int count){
         branch(length*relativeBranchSize, count+1);
         ofPopMatrix();
     }
-    
 }
 
 //--------------------------------------------------------------
