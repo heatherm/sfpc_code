@@ -16,7 +16,7 @@ void ofApp::setup(){
     minSize = 7;
     angleBase = 30;
     bushiness = .96;
-    scale = 1.0;
+    scale = .7;
     
     int count = 0;
     float blamo = trunkSize;
@@ -31,7 +31,7 @@ void ofApp::setup(){
     words.resize(branches);
     
     for (int i = 0; i < branches; i++){
-        int angle = 30 + (i*.96);
+        int angle = angleBase + (i*bushiness);
         if(i%2 == 0){
             angles[i] = ofRandom(10,angle);
             angles[i + 1] = ofRandom(-angle,-10);
@@ -44,25 +44,39 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+
 }
 
 
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    words_copy.clear();
+    
+    for (int j=0; j<words.size(); j++){
+        for (int i=0; i<words.size(); i++){
+            words_copy.push_back(words[i]);
+        }
+    }
+    
+    cout << words_copy.size();
+    
     ofBackground(51);
     
     ofTranslate(ofGetWidth()/2, ofGetHeight());
     ofRotate(-90);
-    branch(trunkSize, 0);
+    branch(trunkSize, 0, false);
 }
 
 
 //--------------------------------------------------------------
-void ofApp::branch(float length, int count){
+void ofApp::branch(float length, int count, bool left){
     ofSetColor(255);
-    ofScale(.9, .9, 1);
-    string text = words[count];
+    ofScale(scale, scale, 1);
+    string text = words_copy.back();
+    words_copy.pop_back();
+
+    
     float fontWidth = font.stringWidth(text);
     font.drawString(text, 0, 0);
     ofTranslate(fontWidth, 0);
@@ -71,11 +85,11 @@ void ofApp::branch(float length, int count){
     if (length > minSize){
         ofPushMatrix();
         ofRotate(angles[count]);
-        branch(length*relativeBranchSize, count+1);
+        branch(length*relativeBranchSize, count+1, true);
         ofPopMatrix();
         ofPushMatrix();
         ofRotate(angles[count+1]);
-        branch(length*relativeBranchSize, count+1);
+        branch(length*relativeBranchSize, count+1, false);
         ofPopMatrix();
     }
 }

@@ -30,13 +30,13 @@ class ofApp : public ofBaseApp{
         void rotateTextWithTimeCurves();
         void linesRadiatingOut();
     
-        void branch(float length, int count);
+        void branch(float length, int count, bool left);
         void generateAngles();
     
         int trunkSize, minSize, angleBase;
         float relativeBranchSize, bushiness, scale;
         vector<int> angles;
-        vector<string> words;
+        vector<string> words, words_copy;
 
     
         ofTrueTypeFont font;
