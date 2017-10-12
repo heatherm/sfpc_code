@@ -7,14 +7,16 @@ void ofApp::setup(){
     bool fullCharSet = true;
     bool makeContours = true;
     
-    font.load("lato-light.ttf", 60, antiAliased, fullCharSet, makeContours);
+    font.load("lato-bold.ttf", 80, antiAliased, fullCharSet, makeContours);
     
     vector<string> word_choices = {"His", "first", "film", "studio", "auspicious", "space", "ship", "commander", "science", "fiction", "classic", "Forbidden", "Planet", "found", "best", "dramatic", "role", "captain", "overturned", "ocean", "liner", "disaster", "movie"};
+    
+    vector<ofColor> color_choices = {ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink};
     
     trunkSize = 250;
     relativeBranchSize = 0.67;
     minSize = 7;
-    angleBase = 30;
+    angleBase = 40;
     bushiness = .96;
     scale = .7;
     
@@ -29,6 +31,8 @@ void ofApp::setup(){
     
     angles.resize(branches);
     words.resize(branches);
+    colors.resize(branches);
+
     
     for (int i = 0; i < branches; i++){
         int angle = angleBase + (i*bushiness);
@@ -36,8 +40,11 @@ void ofApp::setup(){
             angles[i] = ofRandom(10,angle);
             angles[i + 1] = ofRandom(-angle,-10);
             
-            words[i] = word_choices[ofRandom(23)];
-            words[i+1] = word_choices[ofRandom(23)];
+            words[i] = word_choices[ofRandom(word_choices.size())];
+            words[i+1] = word_choices[ofRandom(word_choices.size())];
+            
+            colors[i] = color_choices[ofRandom(color_choices.size())];
+            colors[i+1] = color_choices[ofRandom(color_choices.size())];
         }
     }
 }
@@ -52,14 +59,14 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     words_copy.clear();
+    colors_copy.clear();
     
     for (int j=0; j<words.size(); j++){
         for (int i=0; i<words.size(); i++){
             words_copy.push_back(words[i]);
+            colors_copy.push_back(colors[i]);
         }
     }
-    
-    cout << words_copy.size();
     
     ofBackground(51);
     
@@ -71,10 +78,11 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::branch(float length, int count, bool left){
-    ofSetColor(255);
     ofScale(scale, scale, 1);
     string text = words_copy.back();
+    ofSetColor(colors_copy.back());
     words_copy.pop_back();
+    colors_copy.pop_back();
 
     
     float fontWidth = font.stringWidth(text);

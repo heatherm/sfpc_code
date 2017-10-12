@@ -37,6 +37,7 @@ class ofApp : public ofBaseApp{
         float relativeBranchSize, bushiness, scale;
         vector<int> angles;
         vector<string> words, words_copy;
+        vector<ofColor> colors, colors_copy;
 
     
         ofTrueTypeFont font;
