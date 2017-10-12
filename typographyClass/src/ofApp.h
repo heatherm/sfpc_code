@@ -30,7 +30,15 @@ class ofApp : public ofBaseApp{
         void rotateTextWithTimeCurves();
         void linesRadiatingOut();
     
+        void branch(float length, int count);
+    
+        int trunkSize, minSize;
+        float relativeBranchSize;
+        vector<int> angles;
+
+    
         ofTrueTypeFont font;
         ofEasyCam cam;
         ofPolyline line;
+    
 };

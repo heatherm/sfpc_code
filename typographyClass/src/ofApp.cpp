@@ -5,9 +5,31 @@ void ofApp::setup(){
     bool antiAliased = true;
     bool fullCharSet = true;
     bool makeContours = true;
-
     
-    font.load("lato-light.ttf", 200, antiAliased, fullCharSet, makeContours);
+    trunkSize = 250;
+    relativeBranchSize = 0.67;
+    minSize = 7;
+    
+    int count = 0;
+    float blamo = trunkSize;
+    while (blamo > minSize){
+        count++;
+        blamo *= relativeBranchSize;
+    }
+    
+    int branches = 4*count;
+
+    angles.resize(branches);
+    
+    for (int i = 0; i < branches; i++){
+        int angle = 30 + (i*.96);
+        if(i%2 == 0){
+            angles[i] = ofRandom(10,angle);
+            angles[i + 1] = ofRandom(-angle,-10);
+        }
+    }
+    
+    font.load("lato-light.ttf", 60, antiAliased, fullCharSet, makeContours);
 }
 
 //--------------------------------------------------------------
@@ -15,9 +37,33 @@ void ofApp::update(){
 
 }
 
+
+
 //--------------------------------------------------------------
 void ofApp::draw(){
-    linesRadiatingOut();
+    ofBackground(51);
+    
+    ofTranslate(ofGetWidth()/2, ofGetHeight());
+    branch(trunkSize, 0);
+}
+
+
+//--------------------------------------------------------------
+void ofApp::branch(float length, int count){
+    ofSetColor(255);
+    ofDrawLine(0, 0, 0, -length);
+    ofTranslate(0, -length);
+    if (length > minSize){
+        ofPushMatrix();
+        ofRotate(angles[count]);
+        branch(length*relativeBranchSize, count+1);
+        ofPopMatrix();
+        ofPushMatrix();
+        ofRotate(angles[count+1]);
+        branch(length*relativeBranchSize, count+1);
+        ofPopMatrix();
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -26,7 +72,7 @@ void ofApp::linesRadiatingOut(){
     ofTranslate(300, 300);
     vector <ofPolyline> lines;
     ofSeedRandom(mouseX);
-    vector<ofPath> chars = font.getStringAsPoints("hello");
+    vector<ofPath> chars = font.getStringAsPoints("nice!");
     
     for (int i = 0; i < chars.size(); i++) {
         for (int j = 0; j < chars[i].getOutline().size(); j++) {
@@ -65,7 +111,7 @@ void ofApp::rotateTextWithTimeCurves(){
     ofTranslate(300, 300);
     vector <ofPolyline> lines;
     
-    vector<ofPath> chars = font.getStringAsPoints("hello");
+    vector<ofPath> chars = font.getStringAsPoints("nice!!");
     
     
     for (int i = 0; i < chars.size(); i++) {
@@ -98,7 +144,7 @@ void ofApp::rotateTextWithTimeCurves(){
             
             ofMatrix4x4 m;
             m.makeRotationMatrix(
-                                 ofGetElapsedTimef()*50 + sin(y*.01 + ofGetElapsedTimef())*mouseX,
+                                 ofGetElapsedTimef()*mouseX + sin(y*.01 + ofGetElapsedTimef())*mouseY,
                                  ofPoint(0,1,0)
                                  );
             lines[i][j] = m * lines[i][j];
@@ -111,10 +157,10 @@ void ofApp::rotateTextWithTimeCurves(){
 //--------------------------------------------------------------
 void ofApp::rotateTextOutlines(){
     ofBackground(0);
-    ofTranslate(300, 300);
+    ofTranslate(500, 500);
     vector <ofPolyline> lines;
     
-    vector<ofPath> chars = font.getStringAsPoints("hello");
+    vector<ofPath> chars = font.getStringAsPoints("NICE!!");
     
     
     for (int i = 0; i < chars.size(); i++) {
