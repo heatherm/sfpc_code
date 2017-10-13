@@ -7,18 +7,18 @@ void ofApp::setup(){
     bool fullCharSet = true;
     bool makeContours = true;
     
-    font.load("lato-bold.ttf", 80, antiAliased, fullCharSet, makeContours);
+    font.load("lato-bold.ttf", 60, antiAliased, fullCharSet, makeContours);
     
-    vector<string> word_choices = {"His", "first", "film", "studio", "auspicious", "space", "ship", "commander", "science", "fiction", "classic", "Forbidden", "Planet", "found", "best", "dramatic", "role", "captain", "overturned", "ocean", "liner", "disaster", "movie"};
+    vector<string> word_choices = {"His", "first", "film", "studio", "auspicious", "space", "ship", "commander", "science", "fiction", "classic", "Forbidden", "Planet", "found", "best", "dramatic", "role", "captain", "overturned", "ocean", "liner", "serious", "actor", "camera", "prankster", "personality", "exploited", "Airplane", "huge", "hit", "doctor", "plane", "pilots", "passengers", "hospital", "flight", "attendant", "big", "building", "patients", "important", "deadpans", "fly", "serious", "call", "me", "Shirley", "cast", "type","comedy", "career", "appearing", "such", "comedies", "Repossessed", "takeoff", "demonic", "possession", "movies", "Exorcist", "Mr.", "Magoo", "played", "title", "role", "good", "natured", "bumbler"};
     
     vector<ofColor> color_choices = {ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink};
     
-    trunkSize = 250;
-    relativeBranchSize = 0.67;
+    trunkSize = 40;
+    relativeBranchSize = 0.79;
     minSize = 7;
-    angleBase = 40;
+    angleBase = 45;
     bushiness = .96;
-    scale = .7;
+    scale = .73;
     
     int count = 0;
     float blamo = trunkSize;
@@ -37,8 +37,8 @@ void ofApp::setup(){
     for (int i = 0; i < branches; i++){
         int angle = angleBase + (i*bushiness);
         if(i%2 == 0){
-            angles[i] = ofRandom(10,angle);
-            angles[i + 1] = ofRandom(-angle,-10);
+            angles[i] = ofRandom(5,angle);
+            angles[i + 1] = ofRandom(-angle,-5);
             
             words[i] = word_choices[ofRandom(word_choices.size())];
             words[i+1] = word_choices[ofRandom(word_choices.size())];
@@ -61,7 +61,7 @@ void ofApp::draw(){
     words_copy.clear();
     colors_copy.clear();
     
-    for (int j=0; j<words.size(); j++){
+    for (int j=0; j<words.size()*3; j++){
         for (int i=0; i<words.size(); i++){
             words_copy.push_back(words[i]);
             colors_copy.push_back(colors[i]);
@@ -79,6 +79,7 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::branch(float length, int count, bool left){
     ofScale(scale, scale, 1);
+    
     string text = words_copy.back();
     ofSetColor(colors_copy.back());
     words_copy.pop_back();
@@ -99,6 +100,12 @@ void ofApp::branch(float length, int count, bool left){
         ofRotate(angles[count+1]);
         branch(length*relativeBranchSize, count+1, false);
         ofPopMatrix();
+        if (length < minSize*3) {
+            ofPushMatrix();
+            ofRotate(angles[count+2]);
+            branch(length*relativeBranchSize, count+2, false);
+            ofPopMatrix();
+        }
     }
 }
 
