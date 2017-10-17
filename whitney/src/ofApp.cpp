@@ -5,8 +5,8 @@ void ofApp::setup() {
     gui.setup();
     gui.add(scaleFactor.setup("scaleFactor", 0.1, 10, .3));
     
-    soundPlayer.load("sounds/taro.mp3");
-    soundPlayer.play();
+//    soundPlayer.load("sounds/taro.mp3");
+//    soundPlayer.play();
     
     int bufferSize = 256;
     left.assign(bufferSize, 0.0);
@@ -21,6 +21,8 @@ void ofApp::setup() {
     if(!devices.empty()){
         soundStream.setDevice(devices[0]);
     }
+    
+    soundStream.printDeviceList();
     
     decayRate = 0.05;
     minimumThreshold = 0.1;

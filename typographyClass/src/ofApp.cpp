@@ -9,14 +9,14 @@ void ofApp::setup(){
     
     font.load("lato-bold.ttf", 60, antiAliased, fullCharSet, makeContours);
     
-    vector<string> word_choices = {"His", "first", "film", "studio", "auspicious", "space", "ship", "commander", "science", "fiction", "classic", "Forbidden", "Planet", "found", "best", "dramatic", "role", "captain", "overturned", "ocean", "liner", "serious", "actor", "camera", "prankster", "personality", "exploited", "Airplane", "huge", "hit", "doctor", "plane", "pilots", "passengers", "hospital", "flight", "attendant", "big", "building", "patients", "important", "deadpans", "fly", "serious", "call", "me", "Shirley", "cast", "type","comedy", "career", "appearing", "such", "comedies", "Repossessed", "takeoff", "demonic", "possession", "movies", "Exorcist", "Mr.", "Magoo", "played", "title", "role", "good", "natured", "bumbler"};
+    vector<string> word_choices = {"his", "first", "film", "studio", "auspicious", "space", "ship", "commander", "science", "fiction", "classic", "forbidden", "planet", "found", "best", "dramatic", "role", "captain", "overturned", "ocean", "liner", "serious", "actor", "camera", "prankster", "personality", "exploited", "Airplane", "huge", "hit", "doctor", "plane", "pilots", "passengers", "hospital", "flight", "attendant", "big", "building", "patients", "important", "deadpans", "fly", "serious", "call", "me", "shirley", "cast", "type","comedy", "career", "appearing", "such", "comedies", "takeoff", "demonic", "possession", "movies", "exorcist", "mr.", "magoo", "played", "title", "role", "good", "natured", "bumbler"};
     
-    vector<ofColor> color_choices = {ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink, ofColor::lightPink, ofColor::lightBlue, ofColor::lightPink, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightBlue, ofColor::lightPink};
+vector<ofColor> color_choices = {ofColor(157,157,157,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(239,178,156,180), ofColor(157,157,157,180), ofColor(157,157,157,180), ofColor(157,157,157,180), ofColor(239,178,156,180)};
     
     trunkSize = 40;
-    relativeBranchSize = 0.79;
-    minSize = 7;
-    angleBase = 45;
+    relativeBranchSize = 0.77;
+    minSize = 10;
+    angleBase = 15;
     bushiness = .96;
     scale = .73;
     
@@ -37,8 +37,16 @@ void ofApp::setup(){
     for (int i = 0; i < branches; i++){
         int angle = angleBase + (i*bushiness);
         if(i%2 == 0){
-            angles[i] = ofRandom(5,angle);
-            angles[i + 1] = ofRandom(-angle,-5);
+            int scaledAngle;
+            if (i < 20){
+                scaledAngle = angle*2;
+            } else if (i < 100) {
+                scaledAngle = angle*3;
+            } else {
+                scaledAngle = angle*4;
+            }
+            angles[i] = ofRandom(5,scaledAngle);
+            angles[i + 1] = ofRandom(-scaledAngle,-5);
             
             words[i] = word_choices[ofRandom(word_choices.size())];
             words[i+1] = word_choices[ofRandom(word_choices.size())];
@@ -85,24 +93,35 @@ void ofApp::branch(float length, int count, bool left){
     words_copy.pop_back();
     colors_copy.pop_back();
 
+    ofEnableAlphaBlending();
     
     float fontWidth = font.stringWidth(text);
-    font.drawString(text, 0, 0);
-    ofTranslate(fontWidth, 0);
-
+    ofTranslate(fontWidth + 50/(count+1), 0);
+    ofRotate(180);
+    font.drawString(text, -fontWidth, fontWidth);
+//    font.drawString(text, 0, 0);
+//    ofTranslate(fontWidth + 50/(count+1), 0);
     
     if (length > minSize){
         ofPushMatrix();
-        ofRotate(angles[count]);
+        if (false){
+//            count % 3 == 0
+            ofRotate((angles[count] + 180) % 360);
+        } else {
+            
+
+            ofRotate(angles[count]);
+        }
+        
         branch(length*relativeBranchSize, count+1, true);
         ofPopMatrix();
         ofPushMatrix();
         ofRotate(angles[count+1]);
         branch(length*relativeBranchSize, count+1, false);
         ofPopMatrix();
-        if (length < minSize*3) {
+        if (length < minSize*4) {
             ofPushMatrix();
-            ofRotate(angles[count+2]);
+            ofRotate(angles[angles.size()-count]);
             branch(length*relativeBranchSize, count+2, false);
             ofPopMatrix();
         }
